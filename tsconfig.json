@@ -3,6 +3,8 @@
     "target": "es2018",
     "module": "commonjs",
     "outDir": "dist",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "sourceMap": true
   },
   "include": ["src/**/*.ts"],
