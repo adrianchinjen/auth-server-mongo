@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { RequestHandler } from 'express';
-import { getUserByEmail, getUserByUsername, getUsers } from './getUsers';
-import UserModel from '../models/User';
+import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './getUsers';
+import AuthModel from '../models/Auth';
 import { ErrorResponse } from '../utils/ErrorResponse';
+import UserModel from '../models/People';
 require('dotenv').config();
 
 export const signup: RequestHandler = async (req, res, next) => {
@@ -17,18 +18,32 @@ export const signup: RequestHandler = async (req, res, next) => {
   const checkByUsername = await getUserByUsername(username);
 
   if (!checkByEmail && !checkByUsername) {
-    const userCredentials = { email, username, password: hashedPassword };
-    const newUser = new UserModel(userCredentials);
+    const authCredentials = { email, username, password: hashedPassword };
+    const newAuth = new AuthModel(authCredentials);
 
     try {
-      const response = await newUser.save();
+      const newAuthResponse = await newAuth.save();
+      if (newAuthResponse) {
+        const userCredentials = {
+          auth_id: newAuthResponse._id.valueOf(),
+          username: newAuthResponse.username,
+          email: newAuthResponse.email,
+          roles: newAuthResponse.roles
+        };
+        const newUser = new UserModel(userCredentials);
+        try {
+          const newUserResponse = await newUser.save();
 
-      if (response) {
-        return res.status(201).json({
-          status: 201,
-          message: 'User has been created',
-          payload: { username, email }
-        });
+          if (newUserResponse) {
+            return res.status(201).json({
+              status: 201,
+              message: 'User has been created',
+              payload: { username, email }
+            });
+          }
+        } catch (error) {
+          return next(new ErrorResponse(403, error));
+        }
       }
     } catch (error) {
       return next(new ErrorResponse(403, error));
@@ -86,6 +101,17 @@ export const fetchUsers: RequestHandler = async (req, res, next) => {
   try {
     const users = await getUsers();
 
+    return res.status(200).json({
+      payload: users
+    });
+  } catch (error) {
+    return next(new ErrorResponse(404, error));
+  }
+};
+
+export const fetchUser: RequestHandler = async (req, res, next) => {
+  try {
+    const users = await getUserById(req.params.userid);
     return res.status(200).json({
       payload: users
     });
