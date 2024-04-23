@@ -1,6 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
+import authRoutes from './routes/auth.route';
+import { CustomErrorHandler } from './middlewares/ErrorHandler';
+
 require('dotenv').config();
 
 const app = express();
@@ -9,6 +12,11 @@ const dbname = process.env.DB_NAME;
 const port = process.env.SERVER_PORT;
 
 app.use(cookieParser());
+app.use(express.json());
+
+app.use('/api/v1/auth', authRoutes);
+
+app.use(CustomErrorHandler);
 
 const connect = async () => {
   try {
