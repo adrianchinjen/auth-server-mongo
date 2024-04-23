@@ -1,18 +1,18 @@
 import mongoose, { Schema } from 'mongoose';
 
-interface UserType {
+interface AuthType {
   username: string;
   email: string;
   password: string;
   roles: string[];
 }
 
-const userSchema = new Schema<UserType>({
+const authSchema = new Schema<AuthType>({
   username: {
     type: String,
     required: true,
-    minlength: 6,
-    maxlength: 12,
+    minlength: 3,
+    maxlength: 20,
     unique: true,
     // Custom validator for lowercase and no spaces
     validate: {
@@ -50,6 +50,6 @@ const userSchema = new Schema<UserType>({
   }
 });
 
-const UserModel = mongoose.model('User', userSchema);
+const AuthModel = mongoose.model('Auth', authSchema);
 
-export default UserModel;
+export default AuthModel;
