@@ -18,7 +18,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
   if (!cookies) {
     return res.status(400).json({
       status: 400,
-      message: 'Unauthorized access1'
+      message: 'Unauthorized access. Please log in to verify your identity.'
     });
   }
 
@@ -29,10 +29,12 @@ export const verifyToken: RequestHandler = (req, res, next) => {
       return next(new ErrorResponse(498, 'Invalid token.'));
     }
 
-    req.body.id = user.id;
-    req.body.email = user.email;
-    req.body.username = user.username;
-    req.body.roles = user.roles;
+    req.body.user = user;
+
+    // req.body.id = user.id;
+    // req.body.email = user.email;
+    // req.body.username = user.username;
+    // req.body.roles = user.roles;
 
     next();
   });
@@ -45,7 +47,7 @@ export const refreshToken: RequestHandler = (req, res, next) => {
   if (!cookies) {
     return res.status(400).json({
       status: 400,
-      message: 'Unauthorized access2'
+      message: 'Unauthorized access. Please log in.'
     });
   }
 
@@ -77,10 +79,12 @@ export const refreshToken: RequestHandler = (req, res, next) => {
       sameSite: 'lax'
     });
 
-    req.body.id = user.id;
-    req.body.email = user.email;
-    req.body.username = user.username;
-    req.body.roles = user.roles;
+    req.body.user = user;
+
+    // req.body.id = user.id;
+    // req.body.email = user.email;
+    // req.body.username = user.username;
+    // req.body.roles = user.roles;
 
     next();
   });
