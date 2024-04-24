@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { RequestHandler } from 'express';
-import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './getUsers';
+import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './users';
 import AuthModel from '../models/Auth';
 import { ErrorResponse } from '../utils/ErrorResponse';
 import UserModel from '../models/People';
