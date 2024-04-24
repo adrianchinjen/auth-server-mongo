@@ -46,6 +46,7 @@ const authSchema = new Schema<AuthType>({
   },
   roles: {
     type: [String],
+    enum: ['superadmin', 'admin', 'user'],
     default: ['user']
   }
 });
