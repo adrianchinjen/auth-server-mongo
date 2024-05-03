@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: auth_db
+    ports:
+      - "5000:27017"
+    volumes:
+      - mongodb_data:/data/db
+  auth-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-server
+    ports:
+      - 5080:5080
+    environment:
+      MONGO_URL: mongodb://localhost:5000/
+      DB_NAME: authdb
+      SERVER_PORT: 5080
+      TOKEN_SECRET: 4OfMSlfnEqPdERtmloCOonXyIUOq4GQM
+    depends_on:
+      - mongodb
+volumes:
+  mongodb_data:
