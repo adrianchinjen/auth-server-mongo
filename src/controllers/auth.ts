@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { RequestHandler } from 'express';
 import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './users';
 import AuthModel from '../models/Auth';

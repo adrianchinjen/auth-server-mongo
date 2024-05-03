@@ -21,13 +21,15 @@ app.use(CustomErrorHandler);
 const connect = async () => {
   try {
     await mongoose.connect(`${mongoUrl}${dbname}`);
+    console.log(mongoUrl);
     console.log('MongoDB has been initialized');
   } catch (error) {
+    console.log(error);
     console.log('There is an error when connecting to database');
   }
 };
 
 app.listen(port, () => {
   connect();
-  console.log('App is running on port', port);
+  console.log('App is running on portss', port);
 });

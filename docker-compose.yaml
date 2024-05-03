@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: auth_db
+    ports:
+      - 5000:27017
+    volumes:
+      - mongodb_data:/data/db
+  auth-backend:
+    build: .
+    container_name: auth-server
+    ports:
+     - 5080:5080
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    # environment:
+    #   MONGO_URL: mongodb://mongodb:27017/
+    #   DB_NAME: authdb
+    #   SERVER_PORT: 5080
+    #   TOKEN_SECRET: 4OfMSlfnEqPdERtmloCOonXyIUOq4GQM
+    depends_on:
+      - mongodb
+volumes:
+  mongodb_data:
