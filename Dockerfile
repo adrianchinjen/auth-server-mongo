@@ -27,8 +27,8 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 
-# Expose port 5080
-EXPOSE 5080
+# Expose port 5000
+EXPOSE 80
 
 # Set the startup command
 CMD ["node", "dist/index.js"]

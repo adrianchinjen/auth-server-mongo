@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.route';
 import { CustomErrorHandler } from './middlewares/ErrorHandler';
 
-require('dotenv').config();
+require('dotenv').config({ path: '.env.development' });
 
 const app = express();
 const mongoUrl = process.env.MONGO_URL;
@@ -21,8 +21,7 @@ app.use(CustomErrorHandler);
 const connect = async () => {
   try {
     await mongoose.connect(`${mongoUrl}${dbname}`);
-    console.log(mongoUrl);
-    console.log('MongoDB has been initialized');
+    console.log(`MongoDB has been initialized on DB url ${mongoUrl}`);
   } catch (error) {
     console.log(error);
     console.log('There is an error when connecting to database');
@@ -31,5 +30,5 @@ const connect = async () => {
 
 app.listen(port, () => {
   connect();
-  console.log('App is running on portss', port);
+  console.log('Auth server running on port', port);
 });
