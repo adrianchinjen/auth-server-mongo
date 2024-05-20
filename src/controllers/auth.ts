@@ -5,10 +5,21 @@ import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './user
 import AuthModel from '../models/Auth';
 import { ErrorResponse } from '../utils/ErrorResponse';
 import UserModel from '../models/People';
+import { isValidPassword } from '../utils/passwordChecker';
 require('dotenv').config();
 
 export const signup: RequestHandler = async (req, res, next) => {
   const { username, email, password } = req.body;
+
+  const isPasswordValid = isValidPassword(password);
+
+  if (!isPasswordValid) {
+    return res.status(400).json({
+      statusCode: 400,
+      message:
+        'Password should contain atleast one capital letter, one small letter, one special character, one number and atleast 12 characters long.'
+    });
+  }
 
   const saltRounds = 10;
   const salt = await bcrypt.genSaltSync(saltRounds);
@@ -79,7 +90,7 @@ export const token: RequestHandler = async (req, res, next) => {
     });
   }
 
-  const token = jwt.sign({ id, email, username, roles }, secretKey, { expiresIn: '30s' });
+  const token = jwt.sign({ id, email, username, roles }, secretKey, { expiresIn: '3m' });
 
   if (req.cookies[`${id}`]) {
     req.cookies[`${id}`] = '';
@@ -87,7 +98,7 @@ export const token: RequestHandler = async (req, res, next) => {
 
   res.cookie(id, token, {
     path: '/',
-    expires: new Date(Date.now() + 1000 * 30),
+    expires: new Date(Date.now() + 1000 * 180),
     httpOnly: true,
     sameSite: 'lax'
   });
