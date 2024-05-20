@@ -93,7 +93,8 @@ export const token: RequestHandler = async (req, res, next) => {
   });
 
   return res.status(200).json({
-    message: 'Token has been granted successfully'
+    message: 'Token has been granted successfully',
+    payload: token
   });
 };
 
