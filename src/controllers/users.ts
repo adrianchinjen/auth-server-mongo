@@ -43,7 +43,8 @@ export const getUsers = async () => {
 export const updateUser: RequestHandler = async (req, res, next) => {
   const userId = req.params.userid;
   const userIdInfo = req.body.user.id;
-
+  console.log(userId);
+  console.log(userIdInfo);
   if (userIdInfo !== userId) {
     return next(new ErrorResponse(401, 'Unauthorized action. Information update blocked.'));
   }

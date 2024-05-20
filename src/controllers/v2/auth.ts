@@ -32,6 +32,17 @@ export const grantToken: RequestHandler = async (req, res, next) => {
 
   const token = jwt.sign({ id, email, username, roles }, secretKey, { expiresIn: '60s' });
 
+  if (req.cookies[`${id}`]) {
+    req.cookies[`${id}`] = '';
+  }
+
+  res.cookie(id, token, {
+    path: '/',
+    expires: new Date(Date.now() + 1000 * 60),
+    httpOnly: true,
+    sameSite: 'lax'
+  });
+
   return res.status(200).json({
     message: 'Token has been granted successfully',
     token: token
