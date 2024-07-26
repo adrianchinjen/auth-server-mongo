@@ -1,5 +1,5 @@
 import express from 'express';
-import { fetchUser, fetchUsers, signup, token } from '../controllers/auth';
+import { fetchUser, fetchUsers, signup, signin, grant_token } from '../controllers/auth';
 import { refreshToken, verifyToken } from '../middlewares/tokenHandler';
 import { deleteUser, updateUser } from '../controllers/users';
 
@@ -7,7 +7,9 @@ const router = express.Router();
 
 router.post('/signup', signup);
 
-router.post('/token', token);
+router.post('/signin', signin);
+
+router.post('/token', grant_token);
 
 router.get('/users', verifyToken, refreshToken, fetchUsers);
 

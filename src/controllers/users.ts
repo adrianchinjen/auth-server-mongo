@@ -4,9 +4,21 @@ import AuthModel from '../models/Auth';
 import UserModel from '../models/People';
 import { Role } from '../utils/enum/role.enum';
 
+export interface TokenDetails {
+  user_id: string;
+  auth_id: string;
+  username: string;
+  email: string;
+  roles: string[];
+}
+
 export const getUserByEmail = async (email: string) => {
   try {
     const response = await AuthModel.findOne({ email });
+
+    if (!response) {
+      return null;
+    }
     return response;
   } catch (error) {
     throw new ErrorResponse(401, 'Something went wrong getting user by email.');
@@ -123,4 +135,27 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
   }
 
   return next(new ErrorResponse(401, 'Unauthorized deletion'));
+};
+
+export const getIds = async (email: string) => {
+  try {
+    const authDetails = await AuthModel.findOne({ email });
+
+    if (!authDetails) {
+      return null;
+    }
+
+    const userDetails = await UserModel.findOne({ auth_id: authDetails._id });
+
+    return {
+      auth_id: userDetails.auth_id,
+      user_id: userDetails._id,
+      username: userDetails.username,
+      email: userDetails.email,
+      roles: userDetails.roles,
+      password: authDetails.password
+    };
+  } catch (error) {
+    throw new ErrorResponse(401, 'Something went wrong getting user by ids.');
+  }
 };
