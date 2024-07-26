@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { RequestHandler } from 'express';
-import { getUserByEmail, getUserById, getUserByUsername, getUsers } from './users';
+import { getIds, getUserByEmail, getUserById, getUserByUsername, getUsers } from './users';
 import AuthModel from '../models/Auth';
 import { ErrorResponse } from '../utils/ErrorResponse';
 import UserModel from '../models/People';
@@ -67,7 +67,7 @@ export const signup: RequestHandler = async (req, res, next) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const token: RequestHandler = async (req, res, next) => {
+export const signin: RequestHandler = async (req, res, next) => {
   const reqEmail = req.body.email;
   const reqPassword = req.body.password;
   const secretKey = process.env.TOKEN_SECRET;
@@ -130,4 +130,33 @@ export const fetchUser: RequestHandler = async (req, res, next) => {
   } catch (error) {
     return next(new ErrorResponse(404, error));
   }
+};
+
+export const grant_token: RequestHandler = async (req, res) => {
+  const userDetails = await getIds(req.body.email);
+  const user_input_password = req.body.password;
+  const secretKey = process.env.TOKEN_SECRET;
+
+  if (!userDetails) {
+    return res.status(404).json({
+      message: 'Incorrect email or password'
+    });
+  }
+
+  const { auth_id, user_id, username, email, roles, password } = userDetails;
+
+  const isPasswordCorrect = await bcrypt.compareSync(user_input_password, password);
+
+  if (!isPasswordCorrect) {
+    return res.status(409).json({
+      message: 'Incorrect email or password'
+    });
+  }
+
+  const token = jwt.sign({ auth_id, user_id, username, email, roles }, secretKey, { expiresIn: '3m' });
+
+  return res.status(200).json({
+    message: 'Token has granted successfully',
+    token
+  });
 };
